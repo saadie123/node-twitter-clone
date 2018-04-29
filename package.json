@@ -4,7 +4,8 @@
   "description": "A twitter clone application built with NodeJS, Express and Socket.io",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "server": "nodemon index.js"
   },
   "author": "Saad",
   "license": "ISC",
@@ -15,5 +16,8 @@
     "hbs": "^4.0.1",
     "mongoose": "^5.0.16",
     "morgan": "^1.9.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.17.3"
   }
 }
