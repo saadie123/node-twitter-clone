@@ -1,5 +1,5 @@
 <div class="row justify-content-center mt-3">
-    <div class="col-xs-12 col-md-6">
+    <div class="col-xs-12 col-md-4">
         <h1 class="mb-4">Register Account</h1>
         <form action="/register" method="POST">
             <div class="form-group">
@@ -8,6 +8,7 @@
                 name="name" 
                 type="text"
                 value="{{form.name}}" 
+                id="name"
                 class="form-control {{#if errors.name}} invalid {{/if}}"> 
                 {{#each errors.name}}
                     <div>
@@ -19,7 +20,8 @@
                 <label for="email">Email</label>
                 <input 
                 name="email" 
-                type="email" 
+                type="email"
+                id="email" 
                 value="{{form.email}}"
                 class="form-control {{#if errors.email}} invalid {{/if}}"> 
                 {{#each errors.email}}
@@ -33,6 +35,7 @@
                 <input 
                 name="password" 
                 type="password"
+                id="password"
                 value="{{form.password}}" 
                 class="form-control {{#if errors.password}} invalid {{/if}}">
                 {{#each errors.password}}
@@ -42,10 +45,11 @@
                 {{/each}}
             </div>
             <div class="form-group">
-                <label for="password">Confirm Password</label>
+                <label for="confirmPassword">Confirm Password</label>
                 <input 
                 name="confirmPassword" 
                 type="password" 
+                id="confirmPassword"
                 value="{{form.confirmPassword}}"
                 class="form-control {{#if errors.confirmPassword}} invalid {{/if}}">
                 {{#each errors.confirmPassword}}

@@ -1,6 +1,8 @@
 const router = require('express').Router();
 const validator = require('validator');
 const bcrypt = require('bcrypt');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
 
 const User = require('../models/User');
 
@@ -11,7 +13,13 @@ router.get('/', (req, res) => {
 router.get('/register', (req, res) => {
     res.render('main/register');
 });
-router.post('/register', (req, res) => {
+
+router.get('/login', (req, res) => {
+    res.render('main/login');
+});
+
+router.post('/register', async (req, res) => {
+    const oldUser = await User.findOne({email:req.body.email});
     const errors = {
         name: [],
         email: [],
@@ -26,6 +34,9 @@ router.post('/register', (req, res) => {
     }
     if(!validator.isEmail(req.body.email)){
         errors.email.push({message:'Please enter a valid email address!'});
+    }
+    if(oldUser){
+        errors.email.push({message: 'An account is already registered with this email!'});
     }
     if(!req.body.password){
         errors.password.push({message:'Password is required!'});
@@ -55,13 +66,55 @@ router.post('/register', (req, res) => {
                         password: hash
                     });
                     await user.save();
-                    res.redirect('/');
+                    req.flash('success_message', 'You have registered successfully. Please login now!');
+                    res.redirect('/login');
                 } catch (error) {
                     console.log(error);
                 }
             });
         });
     }
-})
+});
+
+passport.serializeUser((user, done) => {
+    done(null, user.id);
+});
+  
+passport.deserializeUser( async (id, done) => {
+    try {
+        const user = await User.findById(id);
+        done(null, user);
+    } catch (error) {
+        done(null, false);
+        console.log(error);
+    }
+});
+
+passport.use(new LocalStrategy({usernameField: 'email'}, async (email, password, done) => {
+    try {
+        const user = await User.findOne({email});
+        if(!user){
+            return done(null, false, {message: 'No user was found with this email!'});
+        }
+        bcrypt.compare(password, user.password, (err, matched) => {
+            if (err) {
+                console.log(err);
+                return err
+            }
+            if(!matched){
+                return done(null, false, {message:'Incorrect password!'});
+            }
+            done(null, user);
+        })
+    } catch (error) {
+        console.log(error);
+    }
+}));
+
+router.post('/login', passport.authenticate('local',{
+    successRedirect: '/',
+    failureRedirect: '/login',
+    failureFlash: true
+}));
 
 module.exports = router;

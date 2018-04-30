@@ -5,6 +5,9 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const hbs = require('hbs');
 const expresshbs = require('express-handlebars');
+const session = require('express-session');
+const flash = require('connect-flash');
+const passport = require('passport');
 const config = require('./config/secret');
 
 const mainRoutes = require('./routes/main');
@@ -19,6 +22,21 @@ app.use(express.static(path.join(__dirname,'public')));
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended:true }));
+app.use(session({
+    secret: config.secret,
+    resave: true,
+    saveUninitialized: true
+}));
+app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use((req, res, next) => {
+    res.locals.user = req.user || null;
+    res.locals.successMessage = req.flash('success_message');
+    res.locals.error = req.flash('error');
+    next();
+});
 
 app.use('/', mainRoutes);
 
