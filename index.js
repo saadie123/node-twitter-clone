@@ -5,10 +5,13 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const hbs = require('hbs');
 const expresshbs = require('express-handlebars');
+const config = require('./config/secret');
 
 const mainRoutes = require('./routes/main');
 
 const app = express();
+mongoose.Promise = global.Promise;
+mongoose.connect(config.databaseURL);
 
 app.engine('.hbs', expresshbs({ defaultLayout: 'layout', extname: '.hbs' }));
 app.set('view engine', 'hbs');
