@@ -18,6 +18,12 @@ router.get('/login', (req, res) => {
     res.render('main/login');
 });
 
+router.get('/logout', (req, res) => {
+    req.logout();
+    req.flash('success_message', 'You have logged out!');
+    res.redirect('/login');
+});
+
 router.post('/register', async (req, res) => {
     const oldUser = await User.findOne({email:req.body.email});
     const errors = {
