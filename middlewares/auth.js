@@ -1,5 +1,5 @@
 module.exports = {
-    preAuthCheck = (req, res, next) => {
+    preAuthCheck : (req, res, next) => {
         if(!req.user){
             next();
         } else {
