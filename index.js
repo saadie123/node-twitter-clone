@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const hbs = require('hbs');
 const expresshbs = require('express-handlebars');
 const session = require('express-session');
+const cookieParser = require('cookie-parser');
 const flash = require('connect-flash');
 const passport = require('passport');
 const config = require('./config/secret');
@@ -13,6 +14,8 @@ const config = require('./config/secret');
 const mainRoutes = require('./routes/main');
 
 const app = express();
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
 mongoose.Promise = global.Promise;
 mongoose.connect(config.databaseURL);
 
@@ -28,6 +31,7 @@ app.use(session({
     saveUninitialized: true
 }));
 app.use(flash());
+app.use(cookieParser());
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -45,6 +49,6 @@ app.use('*', (req, res) => {
 });
 
 const port = process.env.PORT || 5000;
-app.listen(port, () => {
+http.listen(port, () => {
     console.log(`App runnnig on port ${port}`);
 });

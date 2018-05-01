@@ -5,17 +5,22 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 
 const User = require('../models/User');
+const auth = require('../middlewares/auth');
 
 router.get('/', (req, res) => {
-    res.render('main/landing');
+    if(req.user){
+        res.render('main/home');
+    }else{
+        res.render('main/landing');
+    }
 });
 
-router.get('/register', (req, res) => {
-    res.render('main/register');
+router.get('/register', auth.preAuthCheck,(req, res) => {
+    res.render('account/register');
 });
 
-router.get('/login', (req, res) => {
-    res.render('main/login');
+router.get('/login', auth.preAuthCheck,(req, res) => {
+    res.render('account/login');
 });
 
 router.get('/logout', (req, res) => {
@@ -24,7 +29,7 @@ router.get('/logout', (req, res) => {
     res.redirect('/login');
 });
 
-router.post('/register', async (req, res) => {
+router.post('/register', auth.preAuthCheck,async (req, res) => {
     const oldUser = await User.findOne({email:req.body.email});
     const errors = {
         name: [],
@@ -57,7 +62,7 @@ router.post('/register', async (req, res) => {
         errors.confirmPassword.push({message:'Please confirm your password!'});
     }
     if(errors.name.length > 0 || errors.email.length > 0 || errors.password.length > 0 || errors.confirmPassword.length > 0){
-        res.render('main/register',{errors,form:req.body});
+        res.render('account/register',{errors,form:req.body});
     } else {
         bcrypt.genSalt(10, (err, salt) => {
             bcrypt.hash(req.body.password, salt, async (err, hash) => {
@@ -117,7 +122,7 @@ passport.use(new LocalStrategy({usernameField: 'email'}, async (email, password,
     }
 }));
 
-router.post('/login', passport.authenticate('local',{
+router.post('/login', auth.preAuthCheck, passport.authenticate('local',{
     successRedirect: '/',
     failureRedirect: '/login',
     failureFlash: true
