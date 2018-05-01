@@ -5,11 +5,16 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 
 const User = require('../models/User');
+const Tweet = require('../models/Tweet');
 const auth = require('../middlewares/auth');
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
     if(req.user){
-        res.render('main/home');
+        const tweets = await Tweet.find().populate('author').sort({'created':'desc'});
+        if(!tweets){
+            return res.render('main/home',{message: 'You have no tweets!'});
+        }
+        res.render('main/home', {tweets});
     }else{
         res.render('main/landing');
     }

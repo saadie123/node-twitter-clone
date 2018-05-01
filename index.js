@@ -13,6 +13,8 @@ const passportSocketIO = require('passport.socketio');
 const cookieParser = require('cookie-parser');
 const config = require('./config/secret');
 
+const date = require('./helpers/date');
+
 const mainRoutes = require('./routes/main');
 
 const app = express();
@@ -22,7 +24,7 @@ const sessionStore = new MongoStore({ url:config.databaseURL, autoReconnect: tru
 mongoose.Promise = global.Promise;
 mongoose.connect(config.databaseURL);
 
-app.engine('.hbs', expresshbs({ defaultLayout: 'layout', extname: '.hbs' }));
+app.engine('.hbs', expresshbs({ defaultLayout: 'layout', extname: '.hbs', helpers: {date} }));
 app.set('view engine', 'hbs');
 app.use(express.static(path.join(__dirname,'public')));
 app.use(morgan('dev'));
