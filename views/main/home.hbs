@@ -14,7 +14,7 @@
         {{#each tweets}}
             <div class="card mb-3">
                 <div class="card-body d-flex align-items-center">
-                    <a href="/user/{{ author._id }}"><img class="rounded-circle" src="http://www.britishcastle.club/wp-content/uploads/2017/06/sample-customer-photo2.jpg" height="75" width="75" alt=""></a>
+                    <a href="/user/{{ author._id }}"><img class="rounded-circle" src="/uploads/{{ author.profilePic }}" height="75" width="75" alt=""></a>
                     <div class="ml-3">
                         <h5 class="card-title">{{ author.name }}</h5>
                         <h6 class="card-subtitle mb-2 text-muted">{{date created 'MMM Do YYYY, h:mm a' }}</h6>

@@ -8,3 +8,13 @@ body {
 .invalid{
   border-color: #fc3939;
 }
+.canvas{
+  background-color: #ccc;
+  border-radius: 50%;
+  width: 150px;
+  height: 150px;
+  display: block;
+  margin: 0 auto;
+  margin-bottom: 20px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}

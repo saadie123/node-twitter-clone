@@ -12,7 +12,7 @@ $(document).ready(function(){
         var html = '';
         html += '<div class="card mb-3">';
         html += '<div class="card-body d-flex align-items-center">';
-        html += '<a href="/user/'+data.user._id+'"><img class="rounded-circle" src="http://www.britishcastle.club/wp-content/uploads/2017/06/sample-customer-photo2.jpg" height="75" width="75" alt=""></a>';
+        html += '<a href="/user/'+data.user._id+'"><img class="rounded-circle" src="/uploads/'+data.user.profilePic+'" height="75" width="75" alt=""></a>';
         html += '<div class="ml-3">';
         html += '<h5 class="card-title">'+data.user.name+'</h5>';
         html += '<h6 class="card-subtitle mb-2 text-muted">'+moment(data.tweet.created).format('MMM Do YYYY, h:mm a')+'</h6>';
@@ -55,5 +55,22 @@ $(document).ready(function(){
     });
     $('#unfollow').on('mouseleave', function(){
         $('#unfollow').removeClass('btn-danger').addClass('btn-success').text('Following');
+    });
+
+    $('#upload-file').on('change', function(event){
+        var canvas = document.querySelector('.canvas');
+        var ctx = canvas.getContext('2d');
+        var reader = new FileReader();
+        var profilePic = event.target.files[0];
+        reader.readAsDataURL(profilePic);
+        reader.onload = function() {
+        var img = new Image();
+        img.src = reader.result;
+        img.onload = function() {
+            canvas.height = img.height;
+            canvas.width = img.width;
+            ctx.drawImage(img, 0, 0, img.width, img.height);
+        }
+        };
     });
 });

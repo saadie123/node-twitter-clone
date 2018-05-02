@@ -7,13 +7,14 @@
     <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav ml-auto">
             {{#if user}}
-            <li class="nav-item dropdown">
+            <li class="nav-item dropdown d-flex align-items-center justify-content-between">
                 <a class="nav-link dropdown-toggle" href="#" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <img class="rounded-circle" src="/uploads/{{ user.profilePic }}" height="25" width="25" alt="">
                 {{ user.name }}
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
                     <a class="dropdown-item" href="/user/{{ user.id }}">Profile</a>
-                    <a class="dropdown-item" href="/user/logout">Logout</a>
+                    <a class="dropdown-item" href="/logout">Logout</a>
                 </div>
             </li>
             {{else}}

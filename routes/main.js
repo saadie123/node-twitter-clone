@@ -25,6 +25,11 @@ router.get('/login', auth.preAuthCheck,(req, res) => {
     res.render('account/login');
 });
 
+router.get('/logout', (req, res) => {
+    req.logout();
+    req.flash('success_message', 'You have logged out!');
+    res.redirect('/login');
+});
 
 
 module.exports = router;

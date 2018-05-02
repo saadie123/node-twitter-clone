@@ -11,6 +11,7 @@ const flash = require('connect-flash');
 const passport = require('passport');
 const passportSocketIO = require('passport.socketio');
 const cookieParser = require('cookie-parser');
+const expressFileUpload = require('express-fileupload');
 const config = require('./config/secret');
 
 const date = require('./helpers/date');
@@ -41,6 +42,7 @@ app.use(flash());
 app.use(cookieParser());
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(expressFileUpload());
 const onAuthorizeSuccess = (data, accept) => {
     console.log("Successful connection");
     accept();

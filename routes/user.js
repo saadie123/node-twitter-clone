@@ -26,19 +26,18 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.get('/logout', (req, res) => {
-    req.logout();
-    req.flash('success_message', 'You have logged out!');
-    res.redirect('/login');
-});
 
 router.post('/register', auth.preAuthCheck,async (req, res) => {
     const oldUser = await User.findOne({email:req.body.email});
     const errors = {
+        profilePic: [],
         name: [],
         email: [],
         password: [],
         confirmPassword: []
+    }
+    if(!req.files.profilePic){
+        errors.name.push({message: 'Please choose your profile picture'});
     }
     if(!req.body.name){
         errors.name.push({message:"Name is required!"});
@@ -74,7 +73,13 @@ router.post('/register', auth.preAuthCheck,async (req, res) => {
                     return
                 }
                 try {
+                    const file = req.files.profilePic;
+                    const fileName = Date.now() + '-'+file.name;
+                    file.mv(`./public/uploads/${fileName}`, (error) => {
+                        if(error) console.log(error);
+                    });
                     const user = new User({
+                        profilePic: fileName,
                         name: req.body.name,
                         email: req.body.email,
                         password: hash
