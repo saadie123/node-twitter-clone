@@ -16,6 +16,7 @@ const config = require('./config/secret');
 const date = require('./helpers/date');
 
 const mainRoutes = require('./routes/main');
+const userRoutes = require('./routes/user');
 
 const app = express();
 const http = require('http').Server(app);
@@ -68,6 +69,7 @@ app.use((req, res, next) => {
 require('./realtime/io')(io);
 
 app.use('/', mainRoutes);
+app.use('/user', userRoutes);
 
 app.use('*', (req, res) => {
     res.render('main/not-found');
