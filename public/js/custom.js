@@ -59,6 +59,11 @@ $(document).ready(function(){
 
     $('#upload-file').on('change', function(event){
         var canvas = document.querySelector('.canvas');
+        canvas.style.display='block';
+        var profilePic = document.querySelector('.profile-pic');
+        if(profilePic){
+            profilePic.style.display='none';
+        }
         var ctx = canvas.getContext('2d');
         var reader = new FileReader();
         var profilePic = event.target.files[0];

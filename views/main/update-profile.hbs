@@ -1,11 +1,13 @@
 <div class="row justify-content-center mt-3">
     <div class="col-xs-12 col-md-4">
-        <h1 class="mb-4">Register Account</h1>
-        <form action="/register" method="POST" enctype="multipart/form-data">
+        {{> shared/success}}        
+        <h1 class="mb-4">Update Profile</h1>
+        <form action="/update-profile" method="POST" enctype="multipart/form-data">
+            <img src="/uploads/{{ profilePic }}" class="profile-pic">
             <canvas class="canvas"></canvas>
             <div class="form-group">
                 <div class="custom-file">
-                    <input type="file" required id="upload-file" name="profilePic" class="custom-file-input {{#if errors.profilePic}} invalid {{/if}}" accept="image/*">
+                    <input type="file" id="upload-file" name="profilePic" class="custom-file-input {{#if errors.email}} invalid {{/if}}" accept="image/*">
                     <label for="upload-file" class="custom-file-label">Choose Profile Picture</label>
                 </div>
                 {{#each errors.profilePic}}
@@ -44,37 +46,7 @@
                     </div>
                 {{/each}}
             </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input 
-                name="password" 
-                type="password"
-                required
-                id="password"
-                value="{{form.password}}" 
-                class="form-control {{#if errors.password}} invalid {{/if}}">
-                {{#each errors.password}}
-                    <div>
-                        <span class="text-danger">{{ message }}</span>
-                    </div>
-                {{/each}}
-            </div>
-            <div class="form-group">
-                <label for="confirmPassword">Confirm Password</label>
-                <input 
-                name="confirmPassword" 
-                type="password"
-                required 
-                id="confirmPassword"
-                value="{{form.confirmPassword}}"
-                class="form-control {{#if errors.confirmPassword}} invalid {{/if}}">
-                {{#each errors.confirmPassword}}
-                    <div>
-                        <span class="text-danger">{{ message }}</span>
-                    </div>
-                {{/each}}
-            </div>
-            <button type="submit" class="btn btn-primary mb-3">Register</button>
+            <button type="submit" class="btn btn-primary mb-3">Update Profile</button>
         </form>
     </div>
 </div>
