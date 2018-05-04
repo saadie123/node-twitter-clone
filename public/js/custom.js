@@ -22,33 +22,33 @@ $(document).ready(function(){
         $('#tweets').prepend(html);
     });
 
-
-    $('#follow').click(function(){
-        var id = $('#user_id').val();
-        $.ajax({
-            url: '/user/follow/'+id,
-            type: 'POST',
-            success: function(data) {
-                $('#follow').text('Following').removeClass('btn-primary').addClass('btn-success').attr('id','unfollow')
-            },
-            error: function(err) {
-                console.log(err);
-            }
-        });
-    });
-
-    $('#unfollow').click(function(){
-        var id = $('#user_id').val();
-        $.ajax({
-            url: '/user/unfollow/'+id,
-            type: 'POST',
-            success: function(data) {
-                $('#unfollow').text('Follow').removeClass('btn-success btn-danger').addClass('btn-primary').attr('id','follow')
-            },
-            error: function(err) {
-                console.log(err);
-            }
-        });
+    document.addEventListener('click', function(event){
+        if(event.target.id === 'follow'){
+            var id = $('#user_id').val();
+            $.ajax({
+                url: '/user/follow/'+id,
+                type: 'POST',
+                success: function(data) {
+                    $('#follow').text('Following').removeClass('btn-primary').addClass('btn-success').attr('id','unfollow')
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
+        }
+        if(event.target.id === 'unfollow'){
+            var id = $('#user_id').val();
+            $.ajax({
+                url: '/user/unfollow/'+id,
+                type: 'POST',
+                success: function(data) {
+                    $('#unfollow').text('Follow').removeClass('btn-success btn-danger').addClass('btn-primary').attr('id','follow')
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
+        }
     });
     $('#unfollow').on('mouseover', function(){
         $('#unfollow').removeClass('btn-success').addClass('btn-danger').text('Unfollow');
