@@ -1,0 +1,20 @@
+<div class="row justify-content-center">
+    <div class="col-md-4 col-xs-12">
+        <h1 class="mb-4">Verify Code</h1>    
+        <form action="/verify" method="POST">
+            <p class="lead">A verification code has been sent to your email</p>
+            <div class="form-group">
+                <input type="text"
+                name="code" 
+                id="code" 
+                class="form-control {{#if errors.code}} invalid {{/if}}" placeholder="Enter your code">
+                {{#each errors.code}}
+                    <div>
+                        <span class="text-danger">{{ message }}</span>
+                    </div>
+                {{/each}}
+            </div>
+            <button type="submit" class="btn btn-primary">Verify</button>
+        </form>    
+    </div>
+</div>

@@ -4,6 +4,8 @@ const validator = require('validator');
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const mailer = require('nodemailer');
+const mailerhbs = require('nodemailer-express-handlebars');
 
 const User = require('../models/User');
 const Tweet = require('../models/Tweet');
@@ -38,6 +40,24 @@ router.get('/update-profile', async (req, res)=> {
         email: user.email
     }
     res.render('main/update-profile',{form,profilePic:user.profilePic});
+});
+
+router.get('/reset-password', (req, res) => {
+    res.render('account/reset-password');
+});
+
+router.get('/verify', (req, res)=>{
+    if(!req.session.email){
+        return res.redirect('/reset-password');
+    }    
+    res.render('account/verify');
+});
+
+router.get('/new-password', (req, res)=>{
+    if(!req.session.code){
+        return res.redirect('/verify')
+    }
+    res.render('account/new-password');
 });
 
 router.get('/logout', (req, res) => {
@@ -159,7 +179,7 @@ router.post('/login', auth.preAuthCheck, passport.authenticate('local',{
 
 
 router.post('/update-profile', async (req, res)=>{
-    const errors = {
+    let errors = {
         name: [],
         email: [],
         profilePic: []
@@ -200,5 +220,103 @@ router.post('/update-profile', async (req, res)=>{
     }
     
 });
+
+router.post('/reset-password', async(req, res)=>{
+    const user = await User.findOne({email:req.body.email});
+    let errors = {
+        email: []
+    }
+    if(!req.body.email){
+        errors.email.push({message:'Email is required!'});
+    }
+    if(!validator.isEmail(req.body.email)){
+        errors.email.push({message:'Please enter a valid email address!'});
+    }
+    if(!user){
+        errors.email.push({message:'No user was found with this email!'});        
+    }
+    if(errors.email.length > 0){
+        res.render('account/reset-password',{errors,email:req.body.email});
+    } else{
+        const code = Math.floor(100000 + Math.random() * 900000);
+        req.session.code = code;
+        req.session.email = req.body.email;
+        const transport = mailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: 'saadie.888@gmail.com',
+                pass: 'saad.zafar16'
+            }
+        });
+        transport.use('compile',mailerhbs({ viewPath:'views/email',extName: '.hbs' }))
+        const mailOptions = {
+            from: 'saadie.888@gmail.com',
+            to: req.body.email,
+            subject: 'Password Reset',
+            template:'reset-password',
+            context:{
+                code
+            }
+        }
+        transport.sendMail(mailOptions, (err, info)=>{
+            res.redirect('/verify');
+        });
+    }
+});
+
+router.post('/verify',(req,res)=>{
+    const code = req.session.code;
+    let errors = {
+        code: []
+    }
+    if(req.body.code === ''){
+        errors.code.push({message:"Verification code is required!"});
+    }
+    if(parseInt(req.body.code) !== code){
+        errors.code.push({message:"Your code is invalid"});        
+    }
+    if(errors.code.length > 0){
+        res.render('account/verify',{errors});
+    } else {
+        res.redirect('/new-password');
+    }
+});
+
+router.post('/new-password',(req, res)=>{
+    let errors = {
+        password: [],
+        confirmPassword: []
+    }
+    if(!req.body.password){
+        errors.password.push({message:'Password is required!'});
+    }
+    if(req.body.password.length < 8){
+        errors.password.push({message:'Password must be at least 8 characters'});
+    }
+    if(req.body.password !== req.body.confirmPassword){ 
+        errors.confirmPassword.push({message:'Passwords do not match!'});      
+    }
+    if(!req.body.confirmPassword){
+        errors.confirmPassword.push({message:'Please confirm your password!'});
+    }
+    if(errors.password.length > 0 || errors.confirmPassword.length > 0){
+        res.render('account/new-password',{errors});
+    } else{
+        const email = req.session.email;
+        bcrypt.genSalt(10, (err, salt)=>{
+            bcrypt.hash(req.body.password,salt, (err,hash)=>{
+                if(err){
+                    console.log(err);
+                    return;
+                }
+                User.findOneAndUpdate({email},{$set:{password:hash}}).then(user=>{
+                    req.session.code = null;
+                    req.session.email = null;
+                    res.redirect('/login');
+                })
+            });
+        })
+    }
+})
 
 module.exports = router;
