@@ -72,7 +72,9 @@ require('./realtime/io')(io);
 
 app.use('/', mainRoutes);
 app.use('/user', userRoutes);
-
+app.get('/hello', function(req,res){
+    res.send(req.headers.host);
+})
 app.use('*', (req, res) => {
     res.render('main/not-found');
 });
